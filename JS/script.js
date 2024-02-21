@@ -41,10 +41,30 @@ const data = [
 
   const heightInput = document.querySelector('#height')
   const weigthInput = document.querySelector('#weight')
-  const calcBtn = document.querySelector('#calc-btn')
-  const  clearBtn = document.querySelector('clear-btn')
+  const calcBtn = document.querySelector('#calc_btn')
+  const clearBtn = document.querySelector('#clear-btn')
+
+  const calcContiner = document.querySelector('#calc-container')
+  const resultContainer = document.querySelector('#result-container')
+
+  const imcNumber = document.querySelector('#imc-number span')
+  const imcInfo = document.querySelector('#imc-info span')
+
+  const backBtn = document.querySelector('#back-btn')
 
   // Funções
+  function infoColor(status){
+    imcNumber.classList.add(status)
+    imcInfo.classList.add(status)
+  }
+
+  const clear= () => {
+    heightInput.value= ''
+    weigthInput.value= ''
+    imcNumber.classList= ''
+    imcInfo.classList= ''
+  }
+
   function creatTable(data){
     data.forEach((item) => {
             const div = document.createElement('div')
@@ -68,12 +88,74 @@ const data = [
     });
   }
  
+  function calcImc(weigth,height){
+      const imc = (weigth / (height * height)).toFixed(1)
+
+      return imc
+  }
+
+
+function showOrHiderEsults(){
+  calcContiner.classList.toggle('hide')
+  resultContainer.classList.toggle('hide')
+}
 
   // inicialização
  creatTable(data)
 
+
   //Eventos
-  
+ 
+  calcBtn.addEventListener('click', (e)=> {
+    e.preventDefault()
+
+    const weigth = +weigthInput.value.replace(',', '.')
+    const height = +heightInput.value.replace(',', '.')
+
+    if(!weigth || !height) return
+
+    const imc= calcImc(weigth, height)
+    
+    let info 
+    data.forEach((item) => {
+      if (imc >= item.min && imc <= item.max){
+        info = item.info
+      }
+    })
+
+    if(!info) return
+
+    imcNumber.innerText = imc
+    imcInfo.innerText = info
+    
+    switch(info){
+      case "Magreza":
+        infoColor('low')
+        break
+      case "Normal":
+        infoColor('good')
+        break
+      case "Sobrepeso":
+        infoColor('low')
+        break
+      case "Obesidade":
+        infoColor('medium')
+        break
+      case "Obesidade grave":
+        infoColor('high')
+        break
+
+    }
+    
+
+    showOrHiderEsults()
+  })
+
+  backBtn.addEventListener('click', () => {
+    clear()
+    showOrHiderEsults()
+    
+  })
  
  
 
